@@ -25,3 +25,5 @@ Example:
 ```sh
 python detect_sparks.py test_footage_air.mp4
 ```
+
+![Example Output](demo/example_output1.png)
