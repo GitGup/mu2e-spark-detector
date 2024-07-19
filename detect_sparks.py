@@ -15,7 +15,7 @@ def process_video(path):
     global frame_count
     cap = cv2.VideoCapture(path)
 
-    frame_dir = "frames"
+    frame_dir = "AMB_Sparks"
 
     if not os.path.exists(frame_dir):
         os.makedirs(frame_dir)
@@ -25,13 +25,14 @@ def process_video(path):
         exit()
 
     while cap.isOpened():
-        #print("cap open")
         
         ret, frame = cap.read() 
 
         if ret:
-            frame_path = frame_dir + f"/frame_{frame_count}.jpg"
-            cv2.imwrite(frame_path, frame)
+
+            if detect_spark(frame, frame_count):
+                frame_path = frame_dir + f"/frame_{frame_count}.jpg"
+                cv2.imwrite(frame_path, frame)
 
             frame_count += 1
         else: 
@@ -91,12 +92,4 @@ if __name__ == "__main__":
     
     print("Processing video from: ", raw_video_path)
     process_video(raw_video_path)
-
-    image_files = glob.glob('frames/*.jpg')
-    sorted_image_files = sorted(image_files, key=extract_frame_number)
-
-    frame_count = 0
-    for file_path in sorted_image_files:
-        image = cv2.imread(file_path)
-        detect_spark(image, frame_count)
-        frame_count+=1
+    print("Finished!")
