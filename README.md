@@ -14,6 +14,14 @@ To use this software, you need to install the required dependencies. You can do 
 pip install -r requirements.txt
 ```
 ## Usage
+
+```sh
 python detect_sparks.py <path_to_video_file>
 
-For example: python detect_sparks.py test_footage_air.mp4
+```
+
+
+Example: 
+```sh
+python detect_sparks.py test_footage_air.mp4
+```
