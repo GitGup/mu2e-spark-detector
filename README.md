@@ -1,2 +1,19 @@
 # mu2e-spark-detector
-OpenCV vision processing software to detect sparks on AMB for the Mu2e experiment
+
+OpenCV vision processing software to detect sparks on AMB for the Mu2e experiment.
+
+## Description
+
+This software uses OpenCV vision processing in python in order to detect sparks given a specific masking threshhold.
+
+## Installation
+
+To use this software, you need to install the required dependencies. You can do this by running:
+
+```sh
+pip install -r requirements.txt
+```
+## Usage
+python spark.py <path_to_video_file>
+
+For example: python spark.py test_footage_air.mp4
