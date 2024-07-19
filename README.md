@@ -23,7 +23,7 @@ python detect_sparks.py <path_to_video_file>
 
 Example: 
 ```sh
-python detect_sparks.py test_footage_air.mp4
+python detect_sparks.py demo/test_footage_air.mp4
 ```
 
 ![Example Output](demo/example_output1.png)
