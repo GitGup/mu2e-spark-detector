@@ -24,16 +24,29 @@ def process_video(path):
         print("Error")
         exit()
 
+    prev_frame = None
+    frame_skip_threshold = 5
+    skip_counter = 0
+
     while cap.isOpened():
         
-        ret, frame = cap.read() 
+        ret, curr_frame = cap.read()
 
         if ret:
-
-            if detect_spark(frame, frame_count):
+            #if the prev frame is similar to curr
+            if prev_frame is not None:
+                diff = cv2.absdiff(prev_frame, curr_frame)
+                _, thresh = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)
+                non_zero_count = np.count_nonzero(thresh)
+                if non_zero_count < frame_skip_threshold:
+                    skip_counter += 1
+                    continue
+                
+            if detect_spark(curr_frame, frame_count):
                 frame_path = frame_dir + f"/frame_{frame_count}.jpg"
-                cv2.imwrite(frame_path, frame)
+                cv2.imwrite(frame_path, curr_frame)
 
+            prev_frame = curr_frame
             frame_count += 1
         else: 
             break
@@ -90,6 +103,20 @@ if __name__ == "__main__":
 
     raw_video_path = args.video_path
     
-    print("Processing video from: ", raw_video_path)
-    process_video(raw_video_path)
+    #check if arg dir given is a directory or a path
+    if os.path.isdir(raw_video_path):
+        print("Getting Videos...")
+        for filename in os.listdir(raw_video_path):
+            if filename.endswith('.mp4') or filename.endswith('.AVI'):
+                video_path = os.path.join(raw_video_path, filename)
+                print("Processing video from: ", video_path)
+                process_video(video_path)
+
+    elif os.path.isfile(raw_video_path) and raw_video_path.endswith('.mp4') or raw_video_path.endswith('.AVI'):
+        print("Processing video from: ", raw_video_path)
+        process_video(raw_video_path)
+
+    else:
+        ("Please provide a video path or path to dir containing videos")
+    
     print("Finished!")
