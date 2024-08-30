@@ -6,10 +6,12 @@ import seaborn as sns
 import glob
 import re
 import argparse
+import time
 
 sns.set_theme(style="white")
 
 frame_count = 0
+spark_count = 0
 
 def process_video(path):
     global frame_count
@@ -42,9 +44,7 @@ def process_video(path):
                     skip_counter += 1
                     continue
                 
-            if detect_spark(curr_frame, frame_count):
-                frame_path = frame_dir + f"/frame_{frame_count}.jpg"
-                cv2.imwrite(frame_path, curr_frame)
+            detect_spark(curr_frame)
 
             prev_frame = curr_frame
             frame_count += 1
@@ -61,7 +61,9 @@ def extract_frame_number(file_path):
     return int(match.group(1)) if match else None
 
 #detect AMB spark given an image/frame
-def detect_spark(image, frame_count):
+def detect_spark(image):
+    global frame_count
+    global spark_count
 
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -74,7 +76,7 @@ def detect_spark(image, frame_count):
 
     found_spark = False
     for contour in contours:
-        if cv2.contourArea(contour) > 25:
+        if cv2.contourArea(contour) > 25 and found_spark == False:
             
             #means we found a spark so draw a red square
             x, y, w, h = cv2.boundingRect(contour)
@@ -91,11 +93,12 @@ def detect_spark(image, frame_count):
             found_spark = True
 
             print(f"Spark Detected on frame {frame_count}")
+            spark_count += 1
 
     found_spark = False
 
 if __name__ == "__main__":
-
+    start_time = time.time()
     parser = argparse.ArgumentParser(description="Process video and detect sparks in images.")
     parser.add_argument('video_path', type=str, help='Path to the video file')
 
@@ -119,4 +122,7 @@ if __name__ == "__main__":
     else:
         ("Please provide a video path or path to dir containing videos")
     
-    print("Finished!")
+end_time = time.time()
+time_elapsed = end_time - start_time
+print(f"Finished in {time_elapsed:.2f} seconds!")
+print(f"Total Spark Count: {spark_count}")
